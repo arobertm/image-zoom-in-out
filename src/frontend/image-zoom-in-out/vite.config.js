@@ -15,4 +15,7 @@ export default defineConfig({
       '@': fileURLToPath(new URL('./src', import.meta.url))
     },
   },
+  css: {
+    postcss: './postcss.config.js', // Asigură-te că indică corect fișierul postcss.config.js
+  },
 })
