@@ -1,6 +1,6 @@
 # -+image ZOOM IN-OUT
 
-![+image Logo](logo.png)
+![+image Logo](github-background.png)
 
 A distributed application for processing BMP images using Docker containers. The system consists of 6 containers handling different aspects of image processing:
 
