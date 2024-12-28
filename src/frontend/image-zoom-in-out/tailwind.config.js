@@ -1,10 +1,10 @@
 module.exports = {
-  content: [
-    './index.html',
-    './src/**/*.{vue,js,ts,jsx,tsx}', // Include fișierele din src
-  ],
+  content: ['./src/**/*.{vue,js}'],
   theme: {
-    extend: {},
-  },
-  plugins: [],
+    extend: {
+      colors: {
+        'primary': '#ff0000',
+      }
+    }
+  }
 }

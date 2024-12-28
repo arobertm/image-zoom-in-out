@@ -16,6 +16,6 @@ export default defineConfig({
     },
   },
   css: {
-    postcss: './postcss.config.js', // Asigură-te că indică corect fișierul postcss.config.js
+    postcss: './postcss.config.js',
   },
 })
