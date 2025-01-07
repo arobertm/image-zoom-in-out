@@ -14,7 +14,7 @@
       <div class="container mx-auto flex justify-between items-center p-4">
         <div class="flex items-center space-x-4">
           <h1 class="text-4xl font-bold">
-            <span class="text-red-500">+</span>
+            <span class="text-red-500">_+</span>
             <span class="text-white">image</span>
           </h1>
           <div class="text-sm">
