@@ -2,14 +2,23 @@ const express = require('express');
 const { Sequelize, DataTypes } = require('sequelize');
 const app = express();
 
-// Middleware
-app.use(express.json({ limit: '50mb' }));
-app.use(express.urlencoded({ extended: true }));
-
+app.use(express.raw({
+    type: 'application/octet-stream',
+    limit: 'Infinity'
+}));
 
 const sequelize = new Sequelize('imagedb', 'root', 'root', {
     host: 'localhost',
-    dialect: 'mysql'
+    dialect: 'mysql',
+    dialectOptions: {
+        maxAllowedPacket: 1073741824 
+    },
+    pool: {
+        max: 5,
+        min: 0,
+        acquire: 60000,
+        idle: 10000
+    }
 });
 
 sequelize.authenticate()
@@ -20,7 +29,7 @@ sequelize.authenticate()
         console.error('Unable to connect to the database:', err);
     });
 
-
+// Definim modelul cu BLOB pentru date binare
 const Image = sequelize.define('processed_image', {
     imageId: {
         type: DataTypes.STRING,
@@ -35,8 +44,9 @@ const Image = sequelize.define('processed_image', {
         type: DataTypes.BLOB('long'),
         allowNull: false
     }
+}, {
+    charset: 'binary'
 });
-
 
 sequelize.sync()
     .then(() => {
@@ -45,18 +55,17 @@ sequelize.sync()
 
 app.post('/api/images', async (req, res) => {
     try {
-        const { imageId, zoomLevel, imageData } = req.body;
+        const imageId = req.headers['image-id'];
+        const zoomLevel = parseFloat(req.headers['zoom-level']);
         
-        if (!imageId || !imageData || !zoomLevel) {
+        if (!imageId || !req.body || !zoomLevel) {
             return res.status(400).json({ message: "Missing required fields" });
         }
 
-        const imageBuffer = Buffer.from(imageData, 'base64');
-        
         const savedImage = await Image.create({
             imageId: imageId,
             zoomLevel: zoomLevel,
-            imageData: imageBuffer
+            imageData: req.body 
         });
 
         res.json({
@@ -81,7 +90,14 @@ app.get('/api/images/:imageId', async (req, res) => {
             return res.status(404).json({ message: "Image not found" });
         }
 
+        // Logging pentru debugging
+        console.log("Retrieved image data length:", image.imageData.length);
+        console.log("First 4 bytes:", Array.from(image.imageData.slice(0, 4)).map(b => b.toString(16)));
+        
         res.setHeader('Content-Type', 'image/bmp');
+        res.setHeader('Content-Transfer-Encoding', 'binary');
+        res.setHeader('Content-Length', image.imageData.length);
+        
         res.send(image.imageData);
     } catch (error) {
         console.error('Error retrieving image:', error);
@@ -89,11 +105,9 @@ app.get('/api/images/:imageId', async (req, res) => {
     }
 });
 
-
 app.get('/', (req, res) => {
     res.json({ message: 'Image processing server is running' });
 });
-
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
