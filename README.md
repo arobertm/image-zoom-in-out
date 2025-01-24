@@ -1,4 +1,5 @@
 # Image Zoom In-Out Project 🖼️
+Alexandru Robert-Mihai 
 
 ![Logo](logo.png)
 
