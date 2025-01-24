@@ -1,5 +1,0 @@
-com\imageservice\config\AppConfig.class
-com\imageservice\Main.class
-com\imageservice\model\ImageRequest.class
-com\imageservice\service\JMSPublisher.class
-com\imageservice\service\ImageProcessor.class
