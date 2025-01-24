@@ -1,31 +1,32 @@
-# -+image ZOOM IN-OUT
+# Zoom In Out Project
 
-![+image Logo](github-background.png)
+This project allows you to zoom in and out of images using a web interface.
 
-A distributed application for processing BMP images using Docker containers. The system consists of 6 containers handling different aspects of image processing:
+### Installation
 
-- Java backend with REST API and JMS client
-- Apache TomEE JMS broker
-- MDB and RMI client container
-- Two RMI server containers for image processing
-- Node.js container with MongoDB and MySQL for data storage
+1. Clone the repository to your local machine.
 
-## Features
+```bash
+git clone <repository-url>
+cd zoom-in-out
+```
 
-- BMP image zoom in/out processing
-- Distributed architecture using Docker
-- Real-time processing status updates
-- SNMP monitoring
-- Blob storage for processed images
+2. Build and start the Docker containers.
 
-## Technologies
+```bash
+docker-compose up --build
+```
 
-- Frontend: React
-- Backend: Java (Javalin, Jakarta EE)
-- Message Broker: Apache TomEE
-- Database: MongoDB, MySQL
-- Container Platform: Docker
-- Monitoring: SNMP
+3. Navigate to the frontend directory and install the dependencies.
 
-## Author
-Alexandru Robert-Mihai
+```bash
+cd frontend-src/image-zoom-in-out/
+npm install
+```
+
+4. Start the development server.
+
+```bash
+npm run dev
+```
+

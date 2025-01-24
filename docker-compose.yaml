@@ -1,0 +1,86 @@
+services:
+  broker:
+    build:
+      context: ./c02-broker
+      dockerfile: Dockerfile
+    networks:
+      - dad-network
+    ports:
+      - "61617:61617"
+
+  nodejs-app:
+    build:
+      context: ./c06-nodejs-mysql-mongo
+      dockerfile: Dockerfile
+    depends_on:
+      - broker
+    privileged: true
+    ports:
+      - "3000:3000"
+      - "27017:27017"
+      - "3306:3306"
+    networks:
+      - dad-network
+
+  javalin-server:
+    build:
+      context: ./c01-javalin-api
+      dockerfile: Dockerfile
+    depends_on:
+      - nodejs-app
+    ports:
+      - "7010:7000"
+    environment:
+      - BROKER_HOST=broker      
+      - BROKER_PORT=61617       
+      - SERVER_PORT=7000        
+    user: stud
+    volumes:
+      - ./c01-javalin-api:/home/stud/app
+    networks:
+      - dad-network
+
+  rmi-server-1:
+    build:
+      context: ./c04-rmi-server-1
+      dockerfile: Dockerfile
+    depends_on:
+      - javalin-server
+    ports:
+      - "1099:1099"
+    networks:
+      - dad-network
+    environment:
+      - SERVER_ID=RMI-Server-1
+      - RMI_PORT=1099
+      - SNMP_MANAGER_IP=localhost
+
+  rmi-server-2:
+    build:
+      context: ./c05-rmi-server-2
+      dockerfile: Dockerfile
+    depends_on:
+      - rmi-server-1
+    ports:
+      - "1100:1100"
+    networks:
+      - dad-network
+    environment:
+      - SERVER_ID=RMI-Server-2
+      - RMI_PORT=1100
+      - SNMP_MANAGER_IP=localhost
+
+  tomee-server:
+    build:
+      context: ./c03-ejb-rmi-client
+      dockerfile: Dockerfile
+    depends_on:
+      - broker
+    ports:
+      - "8080:8080"
+    networks:
+      - dad-network
+
+networks:
+  dad-network:
+    driver: bridge
